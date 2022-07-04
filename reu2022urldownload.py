@@ -1,4 +1,21 @@
 """
+Author: salvadorguel
+Mentor: Dr. Anthony Parolari
+Date: Summer 2022
+Universtiy: Marquette University
+Project: Summer Research Experience for Undergraduates (REU). Focusing on Hardware, Embedded Software, and Analytics for Environment Quality Monitoring
+Description:
+    a) This program, with the help of the following other two python code files "HFuncs.py" and "URLs.py", first looks up online a list that
+    gives one the site no, begin date, and end date for that respective sites water quality water temperature measurements for the existing
+    range.
+    b) Then it will save these in arrays making sure to get rid of any that dont have any of the 3 values listed above.
+    c) Thus, with all this info I then generate a URL that is specific for the site and then I use said URL to download the data for that
+    river's water temperature which is all looked at and made sure no waster of space is spent on empty downloaded text files.
+    
+
+Side Note: We are using the following website: https://waterservices.usgs.gov/rest/Site-Service.html and the following site numbers: 
+https://waterdata.usgs.gov/nwis/uv?state_cd=wi&index_pmcode_00010=1&index_pmcode_00011=1&format=station_list&group_key=NONE&range_selection=days&period=7&begin_date=2022-06-07&end_date=2022-06-14&date_format=YYYY-MM-DD&rdb_compression=file&list_of_search_criteria=state_cd%2Crealtime_parameter_selection
+This data will be downloaded and saved to the computer.  
 """
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -66,7 +83,6 @@ if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
     for i in range(0, rangemax):
         URL = URLgenerator(SITENO[i], BEGINDATES[i], ENDDATES[i])
         response = requests.get(URL)              # Getting the content From the Website
-        #if (CheckRequest(response.status_code) == "Success"):
         fullpath = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/' + SITENO[i]
         middleman = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/middleman'
         print('---------------------------')
