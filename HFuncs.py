@@ -12,9 +12,6 @@ Description:
 """
 import os # Need this module to be able to have the OS access the file explorer and delete things for us.
 
-""" 
-# Really no need for this function. The 200 code always happens even if .txt file empty.
-
 def CheckRequest(response):
     if (response == 200):
         return "Success"
@@ -24,7 +21,6 @@ def CheckRequest(response):
     else: 
         print ("-- There was an unknown error  => ", end= "")
         return "Unknown"
-"""
 
 #%% URLgenerator(siteno, begindate, enddate):
 #    => This function is used to generate a URL note that you need 3 arguements. These paraameters are used to
