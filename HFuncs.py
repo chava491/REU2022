@@ -11,6 +11,8 @@ Description:
     readable in the main python script. Thus, these helper functions are the crucial pieces to help in accomplishment.
 """
 import os # Need this module to be able to have the OS access the file explorer and delete things for us.
+import numpy as npy
+import itertools
 
 def CheckRequest(response):
     if (response == 200):
@@ -29,11 +31,11 @@ def CheckRequest(response):
 #%%
 def URLgenerator(siteno, begindate, enddate):
     urla = 'https://nwis.waterdata.usgs.gov/nwis/uv?cb_00010=on&format=rdb&site_no='
-    # sitno goes here
+    # sitno goes here (aka when URL is put together)
     urlb = '&period=&begin_date='
-    # begin date should go here (of the water quality measurements)
+    # begin date should go here (of the water quality measurements. Aka when URL is put together)
     urlc = "&end_date="
-    # end date should go next (of the water quality measurements)
+    # end date should go next (of the water quality measurements. Aka when URL is put together)
     return (urla + siteno + urlb + begindate + urlc + enddate)
 
 #%% stripfile(filename):
@@ -41,7 +43,8 @@ def URLgenerator(siteno, begindate, enddate):
 #    => This only returns the cd directory link to the newly produced AllStationsWithTemp.txt.
 #%%
 def stripfile(filename):
-    output = "/Users/salvadorguel/.spyder-py3/FinalProgramREU/stripped/AllStationsWithTemp.txt"
+    output = "/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/stripped/AllStationsWithTemp.txt"
+   # output = "/Users/salvadorguel/.spyder-py3/FinalProgramREU/stripped/AllStationsWithTemp.txt"
     with open(filename, "r") as infile:
         with open(output, "w") as file:
             for line in infile:
@@ -65,3 +68,37 @@ def checkEmpty(filename):
     else:
         print('empty     => False')
         return False
+    
+#%%
+def savearray(filenamewanted, array):
+    arraytosave = npy.array(array)
+    filepath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/' + filenamewanted + '.txt'
+    file = open(filepath, "w+")
+
+    # Save array to file
+    content = str(arraytosave)
+    file.write(content)
+    file.close()
+    
+#%% Following code provided by 
+# https://stackoverflow.com/questions/14941854/how-to-print-several-array-elements-per-line-to-text-file
+def grouper(n, iterable):
+    it = iter(iterable)
+    while True:
+       chunk = tuple(itertools.islice(it, n))
+       if not chunk:
+           return
+       yield chunk
+       
+def savearrayline(filenamewanted, array, choice):
+    if (choice == 'S'):
+        filepath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/lists/successfull/' + filenamewanted + '.txt'
+        with open(filepath, "w") as f:
+            for chunk in grouper(1, array):
+                f.write(" ".join(str(x) for x in chunk) + "\n")
+    else:
+        filepath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/lists/failed/' + filenamewanted + '.txt'
+        with open(filepath, "w") as f:
+            for chunk in grouper(1, array):
+                f.write(" ".join(str(x) for x in chunk) + "\n")
+    

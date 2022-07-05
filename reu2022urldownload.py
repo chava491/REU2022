@@ -24,6 +24,7 @@ import requests      # Imports the requests module of Python
 from HFuncs import * # Imports all of the functions I defined in HFuncs
 import URLs          # Imports all the URL variables I have defiend 
 import os
+import numpy as npy
 #%% Global Variables
 BEGINDATES = []
 ENDDATES = []
@@ -50,9 +51,11 @@ response = requests.get(URL)              # Getting the content From the Website
 #%% Here we check to make sure that everything went file. Only when we know it did, will we then upload the downloaded data to a
 # file on the computer.
 if (CheckRequest(response.status_code) == "Success"): # Here we check that the URL was indeed valid and we got something back.)
-    with open('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt', 'wb') as f:
+   # with open('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt', 'wb') as f:              # Comment back in when not using flashdrive
+    with open('/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/AllStationsWithTemp.txt', 'wb') as f:
         f.write(response.content)
-        outputfile = stripfile('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt')
+       # outputfile = stripfile('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt')
+        outputfile = stripfile('/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/AllStationsWithTemp.txt')                            # Comment back in when not using flashdrive
         
 #%% Here we are going to be getting rid of the sites with no date columns filled in.
     with open(outputfile, "r") as temp:
@@ -77,15 +80,18 @@ if (CheckRequest(response.status_code) == "Success"): # Here we check that the U
 failedcount = 0
 failedattempts = []
 successfulsites = []
+failedURLS = []
 rangemax = len(SITENO)
 
 if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
     for i in range(0, rangemax):
         URL = URLgenerator(SITENO[i], BEGINDATES[i], ENDDATES[i])
         response = requests.get(URL)              # Getting the content From the Website
-        fullpath = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/' + SITENO[i]
-        middleman = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/middleman'
-        print('---------------------------')
+        #fullpath = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/' + SITENO[i]
+        #middleman = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/middleman'
+        fullpath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/' + SITENO[i] + '.txt'
+        middleman = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/middleman'
+        print('--------------------------- ', )
         print('site no   =>', SITENO[i])
         print('For i     =>', i)
         print('code      =>', response.status_code)
@@ -103,6 +109,7 @@ if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
             successfulsites.append(SITENO[i])
         else:
             failedattempts.append(SITENO[i])
+            failedURLS.append(URL)
             failedcount+=1
                 
         f.close()
@@ -112,3 +119,12 @@ print('done!')
 print("There were ", (rangemax - failedcount), " out of ", len(SITENO), " sites generated ")
 print('')
 print(GENERATEDURLS)
+print('')
+print('These are all the sites that were successfully downloaded')
+print(successfulsites)
+
+savearrayline('successfulsites', successfulsites, 'S')
+savearrayline('generatedurls', GENERATEDURLS, 'S')
+savearrayline('failedsites', failedattempts, 'F')
+savearrayline('failedurls', failedURLS, 'F')
+
