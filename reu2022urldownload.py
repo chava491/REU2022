@@ -111,8 +111,9 @@ if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
             failedattempts.append(SITENO[i])
             failedURLS.append(URL)
             failedcount+=1
-                
+        print("Successfully Downloaded ", (rangemax - failedcount), " out of ", len(SITENO))
         f.close()
+        
 os.remove(middleman)
 
 print('done!')
@@ -127,4 +128,3 @@ savearrayline('successfulsites', successfulsites, 'S')
 savearrayline('generatedurls', GENERATEDURLS, 'S')
 savearrayline('failedsites', failedattempts, 'F')
 savearrayline('failedurls', failedURLS, 'F')
-
