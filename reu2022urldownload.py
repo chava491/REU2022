@@ -5,45 +5,31 @@ Date: Summer 2022
 Universtiy: Marquette University
 Project: Summer Research Experience for Undergraduates (REU). Focusing on Hardware, Embedded Software, and Analytics for Environment Quality Monitoring
 Description:
-    a) This program, with the help of the following other two python code files "HFuncs.py" and "URLs.py", first looks up online a list that
-    gives one the site no, begin date, and end date for that respective sites water quality water temperature measurements for the existing
-    range.
+    a) This program, with the help of the following other two python code files "HFuncs.py" and "URLs.py", firstly compiles a list
+       that contains the site number, begin date, and end date of sites with the paramter code 00010. This means that the site
+       takes continous timeseries water data. Thus, this water data is taken at a period that is known and unchanged.
     b) Then it will save these in arrays making sure to get rid of any that dont have any of the 3 values listed above.
     c) Thus, with all this info I then generate a URL that is specific for the site and then I use said URL to download the data for that
-    river's water temperature which is all looked at and made sure no waster of space is spent on empty downloaded text files.
+    river's water temperature which is all looked at and made sure no waste of space is spent on empty downloaded text files. It is also
+    important to note that these text files are named as the respective site number.
     
 
-Side Note: We are using the following website: https://waterservices.usgs.gov/rest/Site-Service.html and the following site numbers: 
-https://waterdata.usgs.gov/nwis/uv?state_cd=wi&index_pmcode_00010=1&index_pmcode_00011=1&format=station_list&group_key=NONE&range_selection=days&period=7&begin_date=2022-06-07&end_date=2022-06-14&date_format=YYYY-MM-DD&rdb_compression=file&list_of_search_criteria=state_cd%2Crealtime_parameter_selection
-This data will be downloaded and saved to the computer.  
+Side Note: We are using the following website: https://waterservices.usgs.gov/rest/Site-Service.html.
+For more explanation on how the URLs work and are generated, visit the following website:
+    https://waterservices.usgs.gov/rest/Site-Service.html
 """
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 import requests      # Imports the requests module of Python
 from HFuncs import * # Imports all of the functions I defined in HFuncs
-import URLs          # Imports all the URL variables I have defiend 
-import os
-import numpy as npy
-import sys
+import os            # Imports the os module that allows us to delete contents from the disk
 #%% Global Variables
-BEGINDATES = []
-ENDDATES = []
-SITENO = []
-GENERATEDURLS = []
+BEGINDATES = []      # This array will store all the begin dates for every available site
+ENDDATES = []        # This array will store all the end dates for every available site
+SITENO = []          # This array will store all the site numbers with continous timeseries water temperature data
+GENERATEDURLS = []   # This array stores all the individual site's url that contains all water temperature data in the range of its begin and end date
 
-#%% HFUNCS
-# ----------This file contains all the necessary helper funcgtions made custom when needed.
-# Function Table (Summaraization)
-#  ______________________________________________________________________________________________
-# |__________Name________|__________Format_____________________|__________Description____________|
-# |                      |                                     | This will check if the url      |
-# |      CheckRequest    |       CheckRequest(response)        | was used successfully to        |
-# |______________________|_____________________________________|_download its entire contents____|
-# |                      |                                     |                                 |
-# |      URLgenerator    | URLgenerator(begin date, end date)  | This will generate a url with   |
-# |______________________|_____________________________________|_the desired passed in parameters|
-
+#%%
 urlfordates = getsites()
 print(urlfordates)
 

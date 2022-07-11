@@ -9,6 +9,34 @@ Project: Summer Research Experience for Undergraduates (REU). Focusing on Hardwa
 Description:
     a) This program, gives "reu2022urldownload.py" the functions needed to make things simpler and more
     readable in the main python script. Thus, these helper functions are the crucial pieces to help in accomplishment.
+    b) Below you will find some brief explanation of what each function does.
+    
+  ______________________________________________________________________________________________
+ |                              Function Table (Summaraization)                                 |
+ |______________________________________________________________________________________________|
+ |__________Name________|__________Format_____________________|__________Description____________|
+ |                      |                                     | This will check if the url      |
+ |      CheckRequest    |       CheckRequest(response)        | was used successfully to        |
+ |______________________|_____________________________________|_download its entire contents____|
+ |                      |                                     |                                 |
+ |      URLgenerator    | URLgenerator(begin date, end date)  | This will generate a url with   |
+ |______________________|_____________________________________|_the desired passed in parameters|
+ |                      |                                     | This will strip the file of any |
+ |      stripfile       |        stripfile(filename)          | and every line not starting with|
+ |______________________|_____________________________________|_usgs____________________________|
+ |                      |                                     | This function will check that   |
+ |      checkEmpty      |        checkEmpty(filename)         | the given file path is not empty|
+ |______________________|_____________________________________|_________________________________|
+ |                      |                                     | This function will save an array|
+ |      savearray       |   savearray(filenamewanted, array)  | in the form of [' ',...,' '] in |
+ |______________________|_____________________________________|_a textfile on the disk__________|
+ |                      |                                     | This function will save an array|
+ |    savearrayline     | savearrayline(filenamewanted, array,| with each element of that array |
+ |______________________|__choice)____________________________|_taking up only one line_________|  
+ |                      |                                     | This function just generates all|
+ |      getsites        |            getsites()               | the needed URLs to compile the  |
+ |                      |                                     | list of sites with end and begin| 
+ |______________________|_____________________________________|_dates___________________________| 
 """
 import os            # Need this module to be able to have the OS access the file explorer and delete things for us.
 import numpy as npy
@@ -70,6 +98,10 @@ def checkEmpty(filename):
         return False
     
 #%%
+# savearray(filenamewanted, array)
+#    => This function saves an array of your choosing with the name of your choosing in the format seen in the example below
+#        [1, 2, 3, 4, 5] => This is how it would look when the textfile is opened
+#%%
 def savearray(filenamewanted, array):
     arraytosave = npy.array(array)
     filepath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/' + filenamewanted + '.txt'
@@ -112,18 +144,14 @@ def savearrayline(filenamewanted, array, choice):
             for chunk in grouper(1, array):
                 f.write(" ".join(str(x) for x in chunk) + "\n")
                 
-#%% Note that this should literally just be run once to get the txt file if wanted. just put the following in a random python file and uncomment the line savearray... and run it
-# from HFuncs import *
+#%%
 # getsites()
-
+#    => This function compiles all the URLs that will be used to extract site number, begin date, and end date of ever
+#       site that takes continous timeseries water temperature data.
+#%%
 def getsites():
     urlfordates = []
     for i in range(0, len(URLs.FIPSTATECODES)):
         tempurl = 'https://waterservices.usgs.gov/nwis/site/?format=rdb&stateCd=' + URLs.FIPSTATECODES[i] + '&seriesCatalogOutput=true&outputDataTypeCd=iv&parameterCd=00010&siteType=ST&siteStatus=all&hasDataTypeCd=iv'
         urlfordates.append(tempurl)
     return urlfordates
-    # savearrayline('StateURLS', urlfordates, 'Statecodes')
-    
-    
-    
-    
