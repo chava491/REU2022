@@ -25,6 +25,7 @@ from HFuncs import * # Imports all of the functions I defined in HFuncs
 import URLs          # Imports all the URL variables I have defiend 
 import os
 import numpy as npy
+import sys
 #%% Global Variables
 BEGINDATES = []
 ENDDATES = []
@@ -43,41 +44,39 @@ GENERATEDURLS = []
 # |      URLgenerator    | URLgenerator(begin date, end date)  | This will generate a url with   |
 # |______________________|_____________________________________|_the desired passed in parameters|
 
-#%% Obtain list of all available water quality measurements stations that took/take river water temperature measurements
+urlfordates = getsites()
+print(urlfordates)
 
-URL = URLs.wqEntire                       # Bring the URL over from the other file we have it saved in.
-response = requests.get(URL)              # Getting the content From the Website
-
-#%% Here we check to make sure that everything went file. Only when we know it did, will we then upload the downloaded data to a
-# file on the computer.
-if (CheckRequest(response.status_code) == "Success"): # Here we check that the URL was indeed valid and we got something back.)
-   # with open('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt', 'wb') as f:              # Comment back in when not using flashdrive
-    with open('/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/AllStationsWithTemp.txt', 'wb') as f:
-        f.write(response.content)
-       # outputfile = stripfile('/Users/salvadorguel/.spyder-py3/FinalProgramREU/download/AllStationsWithTemp.txt')
-        outputfile = stripfile('/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/AllStationsWithTemp.txt')                            # Comment back in when not using flashdrive
-        
-#%% Here we are going to be getting rid of the sites with no date columns filled in.
-    with open(outputfile, "r") as temp:
-        lines = temp.readlines()
-    # This will go through every single line - Note: The header is ignored.
-    Totallinesskipped = 0
-    for l in lines[1:]:
-        if (l.split()[-2] == 'USGS') or (l.split()[-2] == '--'):
-            Totallinesskipped+=1
-        else:
-            ENDDATES.append(l.split()[-1]) # The number used is -2 because this signifies the second to last column of the text file which is the temperature values
-            BEGINDATES.append(l.split()[-2])        # The number used is -5 because this signifies the third to last column of the text file which is the date values
-            SITENO.append(l.split()[-3])
-    #print(len(ENDDATES))
-    #print(len(BEGINDATES))
-    #print(len(SITENO))
+# Now we need a way to go through all the urls and then append all the site numbers, begin dates, end dates, while making sure that the line says USGS and that the parameter code is 00010
+for i in range(0, len(urlfordates)):
+    URL = urlfordates[i]
+    response = requests.get(URL)                                                            # Getting content from the URL we are currently on.
+    if (CheckRequest(response.status_code) == "Success"):                                   # Here we check that the URL was indeed valid and we got something back.)
+        savelocation = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/tempstatecodegrab.txt'
+        with open(savelocation, 'wb') as f:
+            f.write(response.content)
+            outputfile = stripfile(savelocation)                            # Comment back in when not using flashdrive
+        with open(outputfile, "r") as temp:
+            lines = temp.readlines()
+            for l in lines[1:]:
+                site_no = l.split('\t')[1] # This is saying (from left to right) we are getting the item in the second column of the current line
+                if '00010' in l:
+                    print('site number => ', site_no)
+                    if ((l.split('\t')[0] == 'USGS')):
+                        ENDDATES.append(l.split()[-2]) # The number used is -2 because this signifies the second to last column of the text file which is the temperature values
+                        BEGINDATES.append(l.split()[-3])        # The number used is -5 because this signifies the third to last column of the text file which is the date values
+                        SITENO.append(site_no)
+temparray = []
+for i in range(0, len(SITENO)):
+    temparray.append(SITENO[i] + ' ' + BEGINDATES[i] + ' ' + ENDDATES[i])
+savearrayline('SiteInfoFinal', temparray, 'SiteInfoFinal')
     
 #%% Here we now are going to generate all of the URLs that we will be using to download everything. Then we will be transfering the downloaded
 # data onto a file named "middleman" that will be used as sort of a temp txt file for all the text files that will be messed with.
 # Then I make sure to check that the downloaded data is not just an empty text file, due to no data being available.
 
 failedcount = 0
+successfulcount = 0
 failedattempts = []
 successfulsites = []
 failedURLS = []
@@ -89,7 +88,7 @@ if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
         response = requests.get(URL)              # Getting the content From the Website
         #fullpath = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/' + SITENO[i]
         #middleman = '/Users/salvadorguel/.spyder-py3/FinalProgramREU/Data/middleman'
-        fullpath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/' + SITENO[i] + '.txt'
+        fullpath = '/Volumes/SeagateBackupPlusDrive/reuriverdata/data/' + SITENO[i] + '.txt'
         middleman = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/middleman'
         print('--------------------------- ', )
         print('site no   =>', SITENO[i])
@@ -107,11 +106,13 @@ if ((len(SITENO) == len(BEGINDATES)) and (len(SITENO) == len(ENDDATES))):
         if (checkEmpty(fullpath) == False):
             GENERATEDURLS.append(URL)
             successfulsites.append(SITENO[i])
+            successfulcount+=1
         else:
             failedattempts.append(SITENO[i])
             failedURLS.append(URL)
             failedcount+=1
-        print("Successfully Downloaded ", (rangemax - failedcount), " out of ", len(SITENO))
+        print("Successfully Downloaded ", successfulcount, " out of ", len(SITENO))
+        print("Failed to Download ", failedcount)
         f.close()
         
 os.remove(middleman)
