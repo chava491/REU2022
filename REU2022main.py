@@ -7,12 +7,13 @@ Created on Wed Jul 13 16:22:51 2022
 """
 
 import reu2022urldownload as data
+import REU2022stats as statsreu
 
 while True:
     print('Please note updating the archived data may take a while')
     print('Options:')
     print('0: Update Data')
-    print('1: TBD')
+    print('1: MAPPED 2D GRADIENT')
     print('2: TBD')
     choice = input("What would you like to do? \n")
     
@@ -30,9 +31,8 @@ while True:
                 verificated = True
             else:
                 print('Invalid Option. Try Again')
-            
     elif (choice == '1'):
-        print('TBD')
+        statsreu.average2DGradient()
     elif (choice == '2'):
         print('TBD')
     else:
