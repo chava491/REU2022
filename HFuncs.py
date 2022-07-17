@@ -87,14 +87,14 @@ def stripfile(filename):
 #%%
 def checkEmpty(filename):
     filesize = os.stat(filename).st_size
-    print('os stat   =>', filesize)
+    print('OS stat   =>', filesize)
     if(filesize == 0):
-        print("full path =>", filename)
+        print("Full path =>", filename)
         os.remove(filename)
-        print('empty     => true')
+        print('Empty     => true')
         return True
     else:
-        print('empty     => False')
+        print('Empty     => False')
         return False
     
 #%%
@@ -149,7 +149,7 @@ def savearrayline(filenamewanted, array, choice):
 #    => This function compiles all the URLs that will be used to extract site number, begin date, and end date of ever
 #       site that takes continous timeseries water temperature data.
 #%%
-def getsites():
+def getsitesboot():
     urlfordates = []
     for i in range(0, len(URLs.FIPSTATECODES)):
         tempurl = 'https://waterservices.usgs.gov/nwis/site/?format=rdb&stateCd=' + URLs.FIPSTATECODES[i] + '&seriesCatalogOutput=true&outputDataTypeCd=iv&parameterCd=00010&siteType=ST&siteStatus=all&hasDataTypeCd=iv'

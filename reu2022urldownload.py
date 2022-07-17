@@ -22,21 +22,23 @@ For more explanation on how the URLs work and are generated, visit the following
 # -*- coding: utf-8 -*-
 import requests      # Imports the requests module of Python
 from HFuncs import * # Imports all of the functions I defined in HFuncs
+from REU2022stats import * # Imports all of the functions I defined in HFuncs
 import os            # Imports the os module that allows us to delete contents from the disk
 #%% Global Variables
 BEGINDATES = []      # This array will store all the begin dates for every available site
 ENDDATES = []        # This array will store all the end dates for every available site
 SITENO = []          # This array will store all the site numbers with continous timeseries water temperature data
+SITE_LATITUDES = []
+SITE_LONGITUDES = []
 GENERATEDURLS = []   # This array stores all the individual site's url that contains all water temperature data in the range of its begin and end date
 
 def updatedata():
-    urlfordates = getsites()
-    print(urlfordates)
+    urlfordates = getsitesboot()    # This function goes directly to the website at USGS so everytime it is updated, it will also download completely new sites if they become available
 
 # Now we need a way to go through all the urls and then append all the site numbers, begin dates, end dates, while making sure that the line says USGS and that the parameter code is 00010
-    for i in range(0, len(urlfordates)):
+    for i in range(0, 10): #len(urlfordates)
         URL = urlfordates[i]
-        response = requests.get(URL)                                                            # Getting content from the URL we are currently on.
+        response = requests.get(URL)                                            # Getting content from the URL we are currently on.
         if (CheckRequest(response.status_code) == "Success"):                                   # Here we check that the URL was indeed valid and we got something back.)
             savelocation = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/tempstatecodegrab.txt'
             with open(savelocation, 'wb') as f:
@@ -47,14 +49,23 @@ def updatedata():
                 for l in lines[1:]:
                     site_no = l.split('\t')[1] # This is saying (from left to right) we are getting the item in the second column of the current line
                     if '00010' in l:
-                        print('site number => ', site_no)
+                        print('Site number => ', site_no)
                         if ((l.split('\t')[0] == 'USGS')):
                             ENDDATES.append(l.split()[-2]) # The number used is -2 because this signifies the second to last column of the text file which is the temperature values
                             BEGINDATES.append(l.split()[-3])        # The number used is -5 because this signifies the third to last column of the text file which is the date values
                             SITENO.append(site_no)
+                            latitude = obtainlatitude(site_no)
+                            longitude = obtainlongitude(site_no)
+                            SITE_LATITUDES.append(latitude)
+                            SITE_LONGITUDES.append(longitude)
+                            print('Latitude    => ', latitude)
+                            print('Longitude   => ', longitude)
+                            print('--------------------------')
+
     temparray = []
     for i in range(0, len(SITENO)):
-        temparray.append(SITENO[i] + ' ' + BEGINDATES[i] + ' ' + ENDDATES[i])
+        # file columns as follows: SITE NUMBER - BEGIN DATE - END DATE - DECIMAL LATITUDE - DECIMAL LONGITUDE
+        temparray.append(SITENO[i] + '\t' + BEGINDATES[i] + '\t' + ENDDATES[i] + '\t' + SITE_LATITUDES[i] + '\t' + SITE_LONGITUDES[i])
     savearrayline('SiteInfoFinal', temparray, 'SiteInfoFinal')
     
 #Here we now are going to generate all of the URLs that we will be using to download everything. Then we will be transfering the downloaded
