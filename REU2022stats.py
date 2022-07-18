@@ -6,8 +6,9 @@ Created on Thu Jul 14 01:53:36 2022
 @author: salvadorguel
 """
 import requests
-from HFuncs import * # Imports all of the functions I defined in HFuncs
 import os
+from HFuncs import * # Imports all of the functions I defined in HFuncs
+from datetime import datetime
 
 SITE_INFO_PATH = '/Volumes/SeagateBackupPlusDrive/reuriverdata/lists/SiteInfoFinal.txt'
 SAVE_LOCATION_LATITUDE = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/templatitude.txt'
@@ -55,7 +56,9 @@ def longitudes():
         lines = f.readlines()
         for l in lines[0:]:
             longitudes.append(l.split('\t')[4])   
-    return [x[:-1] for x in longitudes]
+    return [x[:-1] for x in longitudes] # We need to do this because this array is '#\n'. Thus, by adding the 
+                                        # [x[:-1] for x in ARRAYNAME] we just keep the # and not the \n character
+                                        
 
 def obtainlatitude(siteno):
     urla = 'https://waterdata.usgs.gov/nwis/uv?referred_module=qw&search_site_no='
@@ -88,3 +91,35 @@ def obtainlongitude(siteno):
                 if (l.startswith('USGS')):
                     longitude = l.split('\t')[2] # This is saying (from left to right) we are getting the item in the 3rd column of the current line     
     return longitude
+
+def findmax(array):
+    maximum = 0
+    for i in range(0, len(array)):
+        if (array[i] > maximum):
+            maximum = array[i]
+    return maximum
+
+def findmin(array):
+    minimum = array[0]
+    for i in range(0, len(array)):
+        if (array[i] < minimum):
+            minimum = array[i]
+    return minimum
+
+def graphlengthsoftimeseries(begindates, enddates):
+    no_days = []
+    if ((len(begindates)) == (len(enddates))):
+        for i in range(0,len(begindates)):
+            bd = datetime.strptime(begindates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
+            ed = datetime.strptime(enddates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
+            no_days.append((ed - bd).days)
+    
+    print("Smallest Number Of Days => ", findmin(no_days))
+    print("Largest Number Of Days  => ", findmax(no_days))
+    print("")
+    return no_days
+            
+            
+            
+            
+            

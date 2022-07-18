@@ -15,18 +15,13 @@ SITE_END_DATES = statsreu.getenddates()
 SITE_LATITUDES = statsreu.latitudes()
 SITE_LONGITUDES = statsreu.longitudes()
 
-print(SITE_NOS[0])
-print(SITE_BEGIN_DATES[0])
-print(SITE_END_DATES[0])
-print(SITE_LATITUDES[0])
-print(SITE_LONGITUDES[0])
-
-while False:
+while True:
     print('Please note updating the archived data may take a while')
     print('Options:')
     print('0: Update Data')
-    print('1: MAPPED 2D GRADIENT')
-    print('2: TBD')
+    print('1: Graph Lengths Of Timeseries Data')
+    print('2: MAPPED 2D GRADIENT')
+    print('3: TBD')
     choice = input("What would you like to do? \n")
     
     if (choice == '0'):
@@ -44,8 +39,10 @@ while False:
             else:
                 print('Invalid Option. Try Again')
     elif (choice == '1'):
-        statsreu.average2DGradient()
+        no_days_array = statsreu.graphlengthsoftimeseries(SITE_BEGIN_DATES, SITE_END_DATES)
     elif (choice == '2'):
+        statsreu.average2DGradient()
+    elif (choice == '3'):
         print('TBD')
     else:
         print('Invalid Option. Try Again')
