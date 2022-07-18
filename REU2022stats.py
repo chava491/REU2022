@@ -9,6 +9,8 @@ import requests
 import os
 from HFuncs import * # Imports all of the functions I defined in HFuncs
 from datetime import datetime
+import numpy as npy
+import matplotlib.pyplot as pt
 
 SITE_INFO_PATH = '/Volumes/SeagateBackupPlusDrive/reuriverdata/lists/SiteInfoFinal.txt'
 SAVE_LOCATION_LATITUDE = '/Volumes/SeagateBackupPlusDrive/reuriverdata/temp/templatitude.txt'
@@ -58,7 +60,6 @@ def longitudes():
             longitudes.append(l.split('\t')[4])   
     return [x[:-1] for x in longitudes] # We need to do this because this array is '#\n'. Thus, by adding the 
                                         # [x[:-1] for x in ARRAYNAME] we just keep the # and not the \n character
-                                        
 
 def obtainlatitude(siteno):
     urla = 'https://waterdata.usgs.gov/nwis/uv?referred_module=qw&search_site_no='
@@ -108,18 +109,62 @@ def findmin(array):
 
 def graphlengthsoftimeseries(begindates, enddates):
     no_days = []
+    x = []
+    x.append(0)
+    for i in range(1, len(begindates)):
+        x.append((x[i-1]+1))
+    print(x)
+    
     if ((len(begindates)) == (len(enddates))):
         for i in range(0,len(begindates)):
             bd = datetime.strptime(begindates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
             ed = datetime.strptime(enddates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
             no_days.append((ed - bd).days)
-    
+    pt.title("Time Series Lengths For Each Site")
+    pt.scatter(x, no_days, s = 1, color = "red")
+    pt.grid()
+    pt.xlabel('Site Number Index In Relation To The SITE_NO Array')
+    pt.ylabel('Total Number Of Days In Measurement Taking Period')
+    pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraph", dpi=1200)
+    pt.show()
     print("Smallest Number Of Days => ", findmin(no_days))
     print("Largest Number Of Days  => ", findmax(no_days))
-    print("")
+    print("---------------------------")
     return no_days
-            
-            
-            
-            
-            
+
+def graphlengthsofgroupedtimeseries(begindates, enddates, period):
+    no_days = []
+    x_axis = []
+    y_axis = []
+    if ((len(begindates)) == (len(enddates))):
+        for i in range(0,len(begindates)):
+            bd = datetime.strptime(begindates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
+            ed = datetime.strptime(enddates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
+            no_days.append((ed - bd).days)
+    maximumpoint = findmax(no_days)
+    minimumpoint = findmin(no_days)
+    # Want a nice maximum point that coincides with the wanted period
+    # So if max point is 98 and our period is 10 the following will occur
+    # maximumpoint = 98 + (10 - (98%10)) = 98 + (10-8) = 98 + 2 = 100
+    # Thus one can see 100 is a much nicer number to play around with
+    maximumpoint = maximumpoint + (period - (maximumpoint%period))
+    for x in range(period, maximumpoint, period): # The las arguement tells the for loop to increment by the period
+        count = 0
+        temp = x
+        for i in range(0, len(begindates)):
+          if ((no_days[i] < x) and (no_days[i] > (x-period))):
+              count += 1
+              temp1 = "(", (period - temp), period, " )"
+        x_axis.append(temp1) # Exclusive range
+        y_axis.append(count)
+    pt.title("Time Series Lengths For Each Site Grouped by ", period, " days")
+    pt.bar(x_axis, y_axis, s = 1, color = "red")
+    pt.grid()
+    pt.xlabel('Range of No_days')
+    pt.ylabel('Number of Sites')
+    pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraphGrouped", dpi=1200)
+    pt.show()
+    print("Smallest Number Of Days => ", minimumpoint)
+    print("Largest Number Of Days  => ", maximumpoint)
+    print("---------------------------")
+    return no_days
