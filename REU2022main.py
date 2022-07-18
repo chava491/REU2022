@@ -30,10 +30,10 @@ while True:
         while (verificated == False):
             choicev = input("Are you sure? [y/n] \n")
             
-            if (choicev == 'y'):
+            if ((choicev == 'y') or (choice == 'Y')):
                 data.updatedata()
                 verificated = True
-            elif (choicev == 'n'):
+            elif (choicev == 'n' or (choice == 'N')):
                 print('-------- Session end -------- \n \n')
                 verificated = True
             else:
