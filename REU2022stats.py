@@ -21,25 +21,41 @@ def getsites():
     sites = []
     with open(SITE_INFO_PATH, 'r') as f:
         lines = f.readlines()
-        for l in lines[1:]:
-            sites.append(l.split()[1])
+        for l in lines[0:]:
+            sites.append(l.split('\t')[0])
     return sites
 
 def getbegindates():
     begindates = []
     with open(SITE_INFO_PATH, 'r') as f:
         lines = f.readlines()
-        for l in lines[1:]:
-            begindates.append(l.split()[1])
+        for l in lines[0:]:
+            begindates.append(l.split('\t')[1])
     return begindates
-      
+
 def getenddates():
     enddates = []
     with open(SITE_INFO_PATH, 'r') as f:
         lines = f.readlines()
-        for l in lines[1:]:
-            enddates.append(l.split()[1])
+        for l in lines[0:]:
+            enddates.append(l.split('\t')[2])
     return enddates
+
+def latitudes():
+    latitudes = []
+    with open(SITE_INFO_PATH, 'r') as f:
+        lines = f.readlines()
+        for l in lines[0:]:
+            latitudes.append(l.split('\t')[3])
+    return latitudes
+
+def longitudes():
+    longitudes = []
+    with open(SITE_INFO_PATH, 'r') as f:
+        lines = f.readlines()
+        for l in lines[0:]:
+            longitudes.append(l.split('\t')[4])   
+    return [x[:-1] for x in longitudes]
 
 def obtainlatitude(siteno):
     urla = 'https://waterdata.usgs.gov/nwis/uv?referred_module=qw&search_site_no='
@@ -52,7 +68,7 @@ def obtainlatitude(siteno):
                f.write(response.content)
         with open(SAVE_LOCATION_LATITUDE, "r") as temp:
             lines = temp.readlines()
-            for l in lines[1:]:
+            for l in lines[0:]:
                 if (l.startswith('USGS')):
                     latitude = l.split()[1]
     return latitude
@@ -68,7 +84,7 @@ def obtainlongitude(siteno):
             f.write(response.content)
         with open(SAVE_LOCATION_LONGITUDE, "r") as temp:
             lines = temp.readlines()
-            for l in lines[1:]:
+            for l in lines[0:]:
                 if (l.startswith('USGS')):
                     longitude = l.split('\t')[2] # This is saying (from left to right) we are getting the item in the 3rd column of the current line     
     return longitude

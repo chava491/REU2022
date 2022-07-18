@@ -36,7 +36,7 @@ def updatedata():
     urlfordates = getsitesboot()    # This function goes directly to the website at USGS so everytime it is updated, it will also download completely new sites if they become available
 
 # Now we need a way to go through all the urls and then append all the site numbers, begin dates, end dates, while making sure that the line says USGS and that the parameter code is 00010
-    for i in range(0, 10): #len(urlfordates)
+    for i in range(0, len(urlfordates)):
         URL = urlfordates[i]
         response = requests.get(URL)                                            # Getting content from the URL we are currently on.
         if (CheckRequest(response.status_code) == "Success"):                                   # Here we check that the URL was indeed valid and we got something back.)
@@ -46,7 +46,7 @@ def updatedata():
                 outputfile = stripfile(savelocation)                            # Comment back in when not using flashdrive
             with open(outputfile, "r") as temp:
                 lines = temp.readlines()
-                for l in lines[1:]:
+                for l in lines[0:]:
                     site_no = l.split('\t')[1] # This is saying (from left to right) we are getting the item in the second column of the current line
                     if '00010' in l:
                         print('Site number => ', site_no)
