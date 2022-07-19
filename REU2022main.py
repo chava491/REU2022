@@ -23,7 +23,7 @@ while True:
     print('Options:')
     print('0: Update Data')
     print('1: Graph Lengths Of Timeseries Data')
-    print('2: MAPPED 2D GRADIENT')
+    print('2: Generate 2D Heat Maps')
     print('3: TBD')
     print('e: Exit')
     choice = input("What would you like to do? \n")

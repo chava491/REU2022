@@ -123,7 +123,7 @@ def graphlengthsoftimeseries(begindates, enddates):
     pt.scatter(x, no_days, s = 1, color = "red")
     pt.grid()
     pt.xlabel('Site Number Index In Relation To The SITE_NO Array')
-    pt.ylabel('Total Number Of Days In Measurement Taking Period')
+    pt.ylabel('Total Number Of Days From Begin To End Date')
     pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraph", dpi=1200)
     pt.show()
     print("---------------------------")
@@ -154,23 +154,30 @@ def graphlengthsofgroupedtimeseries(begindates, enddates, period):
     for x in range(initial, (rangemax+period), period): # The last arguement tells the for loop to increment x by the period
         count = 0
         temp = x
+        lower_range = temp - period
+        higher_range = (period*periodtracker)-1
+        lower_range_string = str(lower_range)
+        higher_range_string = str(higher_range)
         for i in range(0, len(begindates)):
-          if ((no_days[i] < x) and (no_days[i] >= (x-period))):
+          if ((no_days[i] <= higher_range) and (no_days[i] >= lower_range)):
               count += 1
-        lower_range = str(temp - period)
-        higher_range = str(period*periodtracker)
-        temp1 = "(" + lower_range + ", " + higher_range + ")"
+        temp1 = "(" + lower_range_string + ", " + higher_range_string + ")"
         periodtracker += 1
-        x_axis.append(temp1) # Exclusive range
+        x_axis.append(temp1) # Inclusive Range
         y_axis.append(count)
     tle = "Time Series Lengths For Each Site Grouped by " + str(period) + " days" # We must convert period to string to be able to concatenate all this strings.
     pt.title(tle)
     pt.bar(x_axis, y_axis, color = "red")
     pt.grid()
-    pt.xlabel('Range of No_days')
+    pt.xlabel('Number of Days Site Active')
     pt.ylabel('Number of Sites')
     pt.xticks(rotation = 45, fontsize = 'xx-small')
     pt.tight_layout()
+    add_labels_bargraph(x_axis, y_axis)
     pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraphGrouped", dpi=1200)
     pt.show()
     return no_days
+
+def add_labels_bargraph(x_coor,y_coor):
+    for i in range(0, len(x_coor)):
+        pt.text(i,y_coor[i], y_coor[i], fontsize = 'xx-small')
