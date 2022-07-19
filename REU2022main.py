@@ -43,8 +43,16 @@ while True:
             else:
                 print('Invalid Option. Try Again')
     elif (choice == '1'):
-        no_days_array = statsreu.graphlengthsoftimeseries(SITE_BEGIN_DATES, SITE_END_DATES)
-        statsreu.graphlengthsofgroupedtimeseries(SITE_BEGIN_DATES, SITE_END_DATES, 1000)
+        verification = False
+        while (verification == False):
+            period = input("What Period Would you like to view these graphs in? \n")
+            if(period.isnumeric()):
+                period = int(period) #Must convert period input from string to integer
+                no_days_array = statsreu.graphlengthsoftimeseries(SITE_BEGIN_DATES, SITE_END_DATES)
+                statsreu.graphlengthsofgroupedtimeseries(SITE_BEGIN_DATES, SITE_END_DATES, period)
+                verification = True
+            else:
+                print('Invalid Option. Try Again')
         # The above line will graph the lengths of each site's days of operation.
         # One point for each site
         

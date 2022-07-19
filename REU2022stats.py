@@ -113,7 +113,6 @@ def graphlengthsoftimeseries(begindates, enddates):
     x.append(0)
     for i in range(1, len(begindates)):
         x.append((x[i-1]+1))
-    print(x)
     
     if ((len(begindates)) == (len(enddates))):
         for i in range(0,len(begindates)):
@@ -127,15 +126,16 @@ def graphlengthsoftimeseries(begindates, enddates):
     pt.ylabel('Total Number Of Days In Measurement Taking Period')
     pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraph", dpi=1200)
     pt.show()
+    print("---------------------------")
     print("Smallest Number Of Days => ", findmin(no_days))
     print("Largest Number Of Days  => ", findmax(no_days))
-    print("---------------------------")
+    print("--------------------------- \n")
     return no_days
 
 def graphlengthsofgroupedtimeseries(begindates, enddates, period):
-    no_days = []
-    x_axis = []
-    y_axis = []
+    no_days = []        # This array will contain the difference between the begin and start dates of each site
+    x_axis = []         # This array will contain the (#, #) range of how many days a site has
+    y_axis = []         # This array will contain the no_sites with their no_days being inside of the 
     if ((len(begindates)) == (len(enddates))):
         for i in range(0,len(begindates)):
             bd = datetime.strptime(begindates[i], "%Y-%m-%d") #YEAR/MONTH/DAY
@@ -143,28 +143,34 @@ def graphlengthsofgroupedtimeseries(begindates, enddates, period):
             no_days.append((ed - bd).days)
     maximumpoint = findmax(no_days)
     minimumpoint = findmin(no_days)
-    # Want a nice maximum point that coincides with the wanted period
-    # So if max point is 98 and our period is 10 the following will occur
-    # maximumpoint = 98 + (10 - (98%10)) = 98 + (10-8) = 98 + 2 = 100
-    # Thus one can see 100 is a much nicer number to play around with
-    maximumpoint = maximumpoint + (period - (maximumpoint%period))
-    for x in range(period, maximumpoint, period): # The las arguement tells the for loop to increment by the period
+    
+    
+    rangemax = maximumpoint + (period - (maximumpoint%period))  # Want a nice maximum point that coincides with the wanted period
+                                                                     # So if max point is 98 and our period is 10 the following will occur
+                                                                     # maximumpoint = 98 + (10 - (98%10)) = 98 + (10-8) = 98 + 2 = 100
+                                                                     # Thus one can see 100 is a much nicer number to play around with
+    initial = period
+    periodtracker = 1
+    for x in range(initial, (rangemax+period), period): # The last arguement tells the for loop to increment x by the period
         count = 0
         temp = x
         for i in range(0, len(begindates)):
-          if ((no_days[i] < x) and (no_days[i] > (x-period))):
+          if ((no_days[i] < x) and (no_days[i] >= (x-period))):
               count += 1
-              temp1 = "(", (period - temp), period, " )"
+        lower_range = str(temp - period)
+        higher_range = str(period*periodtracker)
+        temp1 = "(" + lower_range + ", " + higher_range + ")"
+        periodtracker += 1
         x_axis.append(temp1) # Exclusive range
         y_axis.append(count)
-    pt.title("Time Series Lengths For Each Site Grouped by ", period, " days")
-    pt.bar(x_axis, y_axis, s = 1, color = "red")
+    tle = "Time Series Lengths For Each Site Grouped by " + str(period) + " days" # We must convert period to string to be able to concatenate all this strings.
+    pt.title(tle)
+    pt.bar(x_axis, y_axis, color = "red")
     pt.grid()
     pt.xlabel('Range of No_days')
     pt.ylabel('Number of Sites')
+    pt.xticks(rotation = 45, fontsize = 'xx-small')
+    pt.tight_layout()
     pt.savefig("/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraphGrouped", dpi=1200)
     pt.show()
-    print("Smallest Number Of Days => ", minimumpoint)
-    print("Largest Number Of Days  => ", maximumpoint)
-    print("---------------------------")
     return no_days
