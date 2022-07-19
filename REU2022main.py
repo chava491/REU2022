@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jul 13 16:22:51 2022
-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+
 @author: salvadorguel
 """
 
