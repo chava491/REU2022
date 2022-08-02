@@ -66,3 +66,16 @@ FINAL_DATA_PATH = '/Volumes/SeagateBackupPlusDrive/reuriverdata/data/'
 FULL_PATH_HEATPMAP_NAME = '/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/Heatmaps/SITE_Maximum_Temperatures_Heatmap.html'
 FULL_PATH_HEATPMAP_NAME_POPUPS = '/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/Heatmaps/SITE_Maximum_Temperatures_Heatmap_Popups.html'
 
+#%%##################################################################################
+# Full file path for the TimeSeries Grouped Bar Graph                               #
+#####################################################################################
+
+FULL_PATH_GROUPED_BAR_GRAPH ='/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/TimeSeriesLengthsGraphGrouped'
+
+#%%##################################################################################
+# Full file path fow where all the raw data textfiles are                            #
+#####################################################################################
+
+REU_DATA_PATH = '/Volumes/SeagateBackupPlusDrive/reuriverdata/data/'
+FULL_PATH_COLOR_MAP_AVERAGE = '/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/ColorMaps/Color_Map_Averages.png'
+FULL_PATH_COLOR_MAP_VARIANCES = '/Volumes/SeagateBackupPlusDrive/reuriverdata/Graphs/ColorMaps/Color_Map_Variances.png'

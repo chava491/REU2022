@@ -13,6 +13,8 @@ at least 35 GB on it available for this program to use.
 """
 
 import testcases
+import Gradiants
+import ColorMap
 
 import reu2022urldownload as data
 import REU2022stats as statsreu
@@ -21,22 +23,22 @@ import numpy as npy
 
 # Global Variables 
 # Note: That from here to mark 1AE
+
 SITE_NOS = OIFA.getsites()
 SITE_BEGIN_DATES = OIFA.getbegindates()
 SITE_END_DATES = OIFA.getenddates()
-SITE_LATITUDES = OIFA.latitudes()
-SITE_LONGITUDES = OIFA.longitudes()
-# 1AE: Comment out to run option 0 if running for the first time
+SITE_LATITUDES = OIFA.getlat()
+SITE_LONGITUDES = OIFA.getlong()
 
 while True:
     print('----------------------------------------------------------')
     print('Please note updating the archived data may take a while')
     print('Options:')
-    print('0: Update Data')
-    print('1: Graph Lengths Of Timeseries Data')
-    print('2: Generate 2D Heat Maps')
-    print('TC: Run Testcases and Checks ')
-    print('e: Exit')
+    print(' 0: Update Data')
+    print(' 1: Graph Lengths Of Timeseries Data')
+    print(' 2: Generate Color Map')
+    print(' t: Run Testcases and Checks ')
+    print(' e: Exit')
     choice = input("What would you like to do? \n")
     
     if (choice == '0'):
@@ -78,8 +80,11 @@ while True:
         SITE_LATITUDES_AS_FLOATS = array_to_float.astype(float)
         SITE_LONGITUDES_AS_FLOATS = array_to_float_2.astype(float)
         # Call to function that will do all the work to produce the heat map we desire
-        statsreu.average2DGradient(SITE_LATITUDES_AS_FLOATS, SITE_LONGITUDES_AS_FLOATS)
-    elif (choice == 'TC'):
+        '''
+        Gradiants.Average2DGradiant(SITE_LATITUDES_AS_FLOATS, SITE_LONGITUDES_AS_FLOATS)
+        '''
+        ColorMap.create_color_map(SITE_LATITUDES_AS_FLOATS, SITE_LONGITUDES_AS_FLOATS)
+    elif ((choice == 'e') or (choice == 'T')):
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         testcases.TestAllFilesListedAreDownloaded()()
     elif ((choice == 'e') or (choice == 'E')):
